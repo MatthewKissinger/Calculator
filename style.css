@@ -4,3 +4,51 @@
     box-sizing: border-box;
 }
 
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#calc-container {
+    border: 1px solid red;
+    border-radius: 4px;
+    height: 450px;
+    width: 350px;
+    margin: 0 auto;
+}
+
+#display-container {
+    border: 1px solid green;
+    border-radius: 4px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 32px;
+    height: 15%;
+    width: 90%;
+    margin: 5% auto 2.5% auto;
+    padding: 5px 16px;
+}
+
+#button-container {
+    /* border: 1px solid blue; */
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 5px;
+    border-radius: 4px;
+    width: 90%;
+    height: 73.5%;
+    margin: 5% auto 5% auto;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid purple;
+    border-radius: 4px;
+    
+}
