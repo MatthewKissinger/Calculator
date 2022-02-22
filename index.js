@@ -7,6 +7,7 @@ let expressions = {
     numeric: /[0-9]/,
     operator: /[+*\-\/]/,
     decimal: /[.]/,
+    equal: /[=]/,
 }
 
 // ------ Global Variables ------
@@ -96,7 +97,6 @@ backspaceBtn.addEventListener('click', function() {
 // Event Listener for keystroke functionality
 document.addEventListener('keyup', function(e) {
     let key = e.key;
-    console.log(key);
     // logic for if a number key was pressed
     if (expressions['numeric'].test(key)) {
         if (displayValue === '0' || displayValue === '') {
@@ -123,8 +123,37 @@ document.addEventListener('keyup', function(e) {
         operator = key;
         updateLastClickedKey(key); 
     }
-    // logic for equal button
-
+    // logic for equal button or enter key
+    if (expressions['equal'].test(key) || key === 'Enter') {
+        executeOperate();
+        operator = undefined;
+        updateLastClickedKey(key);
+    }
+    // logic for decimal key
+    if (expressions['decimal'].test(key)) {
+        if (displayValue === '0') {
+            displayValue += key;
+            display.textContent = displayValue;
+        } else if (expressions['operator'].test(lastClicked)) {
+            displayValue = `0${key}`;
+            display.textContent = displayValue;
+            lastClicked = key;
+        } else if (!expressions['decimal'].test(displayValue)) {
+            displayValue += key;
+            display.textContent = displayValue;
+        }
+    }
+    // logic for backspace and delete key
+    if (key === 'Backspace' || key === 'Delete') {
+        if (expressions['numeric'].test(lastClicked)) {
+            displayValue = displayValue.slice(0, -1);
+            display.textContent = displayValue;
+            if (displayValue === '') {
+                displayValue = '0';
+                display.textContent = displayValue;
+            }
+        }
+    }
 });
 
 // ------ Methods -------
