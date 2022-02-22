@@ -1,15 +1,15 @@
 // ToDo List
 
-// ** Add in backspace functionality
+// add in keyup functionality
 
-// regex expressions
+// ------ regex expressions ------
 let expressions = {
     numeric: /[0-9]/,
     operator: /[+*\-\/]/,
     decimal: /[.]/,
 }
 
-// Global Variables
+// ------ Global Variables ------
 let displayValue = '0';
 let num1;
 let num2;
@@ -17,7 +17,7 @@ let operator;
 let result;
 let lastClicked = '';
 
-// DOM cache
+// ------ DOM cache ------
 let display = document.getElementById('display-container');
 display.textContent = displayValue;
 
@@ -28,7 +28,7 @@ let clearBtn = document.querySelector('.clear');
 let decimalBtn = document.querySelector('.decimal');
 let backspaceBtn = document.querySelector('.backspace');
 
-// Event Listeners
+// ------ Event Listeners ------
 numBtns.forEach(button => button.addEventListener('click', function() {
 
     if (displayValue === '0' || displayValue === '') {
@@ -54,7 +54,6 @@ operatorBtns.forEach(button => button.addEventListener('click', function() {
         updateLastClicked(button);
         operator = button.textContent;
     }
-
     operator = button.textContent;
     updateLastClicked(button); 
 }));
@@ -94,7 +93,41 @@ backspaceBtn.addEventListener('click', function() {
     }
 })
 
-// Methods
+// Event Listener for keystroke functionality
+document.addEventListener('keyup', function(e) {
+    let key = e.key;
+    console.log(key);
+    // logic for if a number key was pressed
+    if (expressions['numeric'].test(key)) {
+        if (displayValue === '0' || displayValue === '') {
+            clearDisplay();
+        }
+        if (expressions['operator'].test(lastClicked)) {
+            clearDisplay();
+            updateLastClickedKey(key);
+        }
+        displayValue += key;
+        display.textContent = displayValue;
+        updateLastClickedKey(key);
+    } 
+    // logic for operator keys
+    if (expressions['operator'].test(key)) {
+        if (num1 === undefined) {
+            num1 = parseFloat(displayValue);
+        } 
+        if (expressions['numeric'].test(parseInt(lastClicked))) {
+            executeOperate();
+            updateLastClickedKey(key);
+            operator = key;
+        }
+        operator = key;
+        updateLastClickedKey(key); 
+    }
+    // logic for equal button
+
+});
+
+// ------ Methods -------
 
 // adds 2 numbers together
 function add(a, b) {
@@ -145,6 +178,10 @@ function clearDisplay() {
 
 function updateLastClicked(button) {
     lastClicked = button.textContent;
+}
+
+function updateLastClickedKey(key) {
+    lastClicked = key;
 }
 
 function executeOperate() {

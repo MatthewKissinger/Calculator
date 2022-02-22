@@ -15,6 +15,7 @@ body {
 
 #calc-container {
     /* border: 1px solid red; */
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2px;
     background-color: #277da1;
     border-radius: 4px;
     height: 450px;
