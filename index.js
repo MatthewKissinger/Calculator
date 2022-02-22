@@ -1,36 +1,127 @@
 // ToDo List
-// 4) Create the eventlistener functions that populate the dislay when you click the number buttons
-//   -- Hint: you should be storing the 'display value' in a variable somewhere for use in the next step
-// 5) Make the calc work!
-//   -- store the first number 
 
+// ** Add in backspace functionality
+
+// regex expressions
+let expressions = {
+    numeric: /[0-9]/,
+    operator: /[+*\-\/]/,
+    decimal: /[.]/,
+}
+
+// Global Variables
+let displayValue = '0';
+let num1;
+let num2;
+let operator;
+let result;
+let lastClicked = '';
 
 // DOM cache
+let display = document.getElementById('display-container');
+display.textContent = displayValue;
+
+let numBtns = document.querySelectorAll('.number');
+let operatorBtns = document.querySelectorAll('.operator');
+let equalBtn = document.querySelector('.equals');
+let clearBtn = document.querySelector('.clear');
+let decimalBtn = document.querySelector('.decimal');
+let backspaceBtn = document.querySelector('.backspace');
+
+// Event Listeners
+numBtns.forEach(button => button.addEventListener('click', function() {
+
+    if (displayValue === '0' || displayValue === '') {
+        clearDisplay();
+    }
+    if (expressions['operator'].test(lastClicked)) {
+        clearDisplay();
+        updateLastClicked(button);
+    }
+
+    displayValue += button.textContent;
+    display.textContent = displayValue;
+    updateLastClicked(button);
+}));
+
+operatorBtns.forEach(button => button.addEventListener('click', function() {
+
+    if (num1 === undefined) {
+        num1 = parseFloat(displayValue);
+    } 
+    if (expressions['numeric'].test(parseInt(lastClicked))) {
+        executeOperate();
+        updateLastClicked(button);
+        operator = button.textContent;
+    }
+
+    operator = button.textContent;
+    updateLastClicked(button); 
+}));
+
+equalBtn.addEventListener('click', function() {
+    executeOperate();
+    operator = undefined;
+    updateLastClicked(equalBtn.textContent);
+});
+
+clearBtn.addEventListener('click', function() {
+    clearButton();
+});
+
+decimalBtn.addEventListener('click', function() {
+    if (displayValue === '0') {
+        displayValue += decimalBtn.textContent;
+        display.textContent = displayValue;
+    } else if (expressions['operator'].test(lastClicked)) {
+        displayValue = `0${decimalBtn.textContent}`;
+        display.textContent = displayValue;
+        lastClicked = decimalBtn.textContent;
+    } else if (!expressions['decimal'].test(displayValue)) {
+        displayValue += decimalBtn.textContent;
+        display.textContent = displayValue;
+    }
+});
+
+backspaceBtn.addEventListener('click', function() {
+    if (expressions['numeric'].test(lastClicked)) {
+        displayValue = displayValue.slice(0, -1);
+        display.textContent = displayValue;
+        if (displayValue === '') {
+            displayValue = '0';
+            display.textContent = displayValue;
+        }
+    }
+})
 
 // Methods
 
 // adds 2 numbers together
 function add(a, b) {
-    return a + b;
+    let result = a + b;
+    return testForDecimals(result);
 }
 
 // subtracts the 2nd number from the first
 function subtract(a, b) {
-    return a - b;
+    let result = a - b;
+    return testForDecimals(result);
 }
 
 // multiplies 2 numbers together
 function multiply(a, b) {
-    return a * b;
+    let result = a * b;
+    return testForDecimals(result);
 }
 
 // divides the 1st num by the 2nd -- throws an error if dividing by zero
 function divide(a, b) {
     if (b === 0) {
-        console.log(`You can't divide by zero`);
-        return;
+        return 'ERROR';
     }
-    return a / b;
+
+    let result = a / b;
+    return testForDecimals(result);
 }
 
 // directs the input to the correct math function
@@ -47,7 +138,42 @@ function operate(operator, num1, num2) {
     }
 }
 
+function clearDisplay() {
+    displayValue = '';
+    display.textContent = '';
+}
 
+function updateLastClicked(button) {
+    lastClicked = button.textContent;
+}
+
+function executeOperate() {
+    if (num1 != undefined && operator != undefined) {
+        num2 = parseFloat(displayValue);
+
+        result = operate(operator, num1, num2);
+        display.textContent = result;
+        if (result === 'ERROR') {
+            alert(`ERROR you can't divide by 0! Press Clear to restart Calculator`);
+        }
+        num1 = parseFloat(result);
+    }
+}
+
+function clearButton() {
+    displayValue = '0';
+    display.textContent = displayValue;
+    num1 = undefined;
+    num2 = undefined;
+    operator = undefined;
+}
+
+function testForDecimals(result) {
+    if (result % 1 != 0) {
+        return result.toFixed(2);
+    } else {
+        return result;
+    }
+}
 
 // testing zone
-console.log(operate('*', 25, 55));
